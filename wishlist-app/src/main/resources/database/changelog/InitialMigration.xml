@@ -1,0 +1,90 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <!-- Создание таблицы users -->
+    <changeSet author="dashbah" id="create-table-users">
+        <createTable tableName="users">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="VARCHAR(100)"/>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="password_hash" type="VARCHAR(255)"/>
+            <column name="registered_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="last_login_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы gifts -->
+    <changeSet author="dashbah" id="create-table-gifts">
+        <createTable tableName="gifts">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(250)"/>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL"/>
+            <column name="url" type="VARCHAR(250)"/>
+            <column name="wishlist_id" type="bigint"/>
+            <column name="sample_gift_id" type="bigint"/>
+<!--            <foreignKeyConstraint baseColumnNames="wishlist_id" baseTableName="gifts" referencedColumnNames="id" referencedTableName="wishlists"/>-->
+<!--            <foreignKeyConstraint baseColumnNames="sample_gift_id" baseTableName="gifts" referencedColumnNames="id" referencedTableName="sample_gifts"/>-->
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы wishlists -->
+    <changeSet author="dashbah" id="create-table-wishlists">
+        <createTable tableName="wishlists">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint"/>
+            <column name="is_public" type="boolean"/>
+<!--            <foreignKeyConstraint baseColumnNames="user_id" baseTableName="wishlists" referencedColumnNames="id" referencedTableName="users"/>-->
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы sample_gifts -->
+    <changeSet author="dashbah" id="create-table-sample-gifts">
+        <createTable tableName="sample_gifts">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(250)"/>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL"/>
+            <column name="url" type="VARCHAR(250)"/>
+            <column name="category_id" type="bigint"/>
+<!--            <foreignKeyConstraint baseColumnNames="category_id" baseTableName="sample_gifts" referencedColumnNames="id" referencedTableName="categories"/>-->
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы categories -->
+    <changeSet author="dashbah" id="create-table-categories">
+        <createTable tableName="categories">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(250)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы booking_history -->
+    <changeSet author="dashbah" id="create-table-booking_history">
+        <createTable tableName="booking_history">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="booked_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="status" type="VARCHAR(64)"/>
+
+            <column name="gift_id" type="bigint"/>
+            <column name="user_booked_id" type="bigint"/>
+<!--            <foreignKeyConstraint baseColumnNames="gift_id" baseTableName="booking_history" referencedColumnNames="id" referencedTableName="gifts"/>-->
+<!--            <foreignKeyConstraint baseColumnNames="user_booked_id" baseTableName="booking_history" referencedColumnNames="id" referencedTableName="users"/>-->
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
