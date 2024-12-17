@@ -87,4 +87,29 @@
         </createTable>
     </changeSet>
 
+    <!-- Добавляем данные в таблицу sample_gifts -->
+    <changeSet id="insert-data-into-sample-gifts" author="your_name">
+        <insert tableName="sample_gifts">
+            <column name="title" value="Книга 'Мастер и Маргарита'"/>
+            <column name="description" value="Классический роман Михаила Булгакова."/>
+            <column name="price" value="500.00"/>
+            <column name="url" value="https://example.com/master-and-margarita"/>
+            <column name="category_id" value="1"/>
+        </insert>
+        <insert tableName="sample_gifts">
+            <column name="title" value="Наушники Sony WH-1000XM4"/>
+            <column name="description" value="Беспроводные наушники с шумоподавлением."/>
+            <column name="price" value="15000.00"/>
+            <column name="url" value="https://example.com/sony-headphones"/>
+            <column name="category_id" value="2"/>
+        </insert>
+        <insert tableName="sample_gifts">
+            <column name="title" value="Кофеварка DeLonghi"/>
+            <column name="description" value="Автоматическая кофемашина для приготовления эспрессо."/>
+            <column name="price" value="12000.00"/>
+            <column name="url" value="https://example.com/delonghi-coffee-maker"/>
+            <column name="category_id" value="3"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
