@@ -26,7 +26,7 @@ public class SampleGiftServiceImpl implements SampleGiftService {
     }
 
     @Override
-    public SampleGiftDto findById(Long id) {
+    public SampleGiftDto findById(Long id) throws NullPointerException {
         return Optional.of(getById(id)).map(bookMapper::modelToDto).get();
     }
 
@@ -44,9 +44,9 @@ public class SampleGiftServiceImpl implements SampleGiftService {
         bookRepository.delete(book);
     }
 
-    private SampleGiftEntity getById(Long id) {
+    private SampleGiftEntity getById(Long id) throws NullPointerException {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NullPointerException(
                         "SampleGift with id: " + id + " not found"));
     }
 }

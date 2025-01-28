@@ -9,6 +9,7 @@ services:
       - "8181:8181"
     depends_on:
       - wishlist-db
+      - loki
     environment:
       - SERVER_PORT= 8181
       - SPRING_DATASOURCE_URL=jdbc:postgresql://wishlist-db/wishlist_db
@@ -18,10 +19,8 @@ services:
   wishlist-db:
     image: postgres:14.8-alpine3.18
     environment:
-#      POSTGRES_DB: "wishlist-db"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "123qwe"
-#      PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ./infrastructure/db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
       - db-data:/var/lib/postgresql/data
@@ -40,18 +39,68 @@ services:
           cpus: '1'
           memory: 4G
 
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4:7
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: bahankova.dasha@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: root
+  grafana:
+    build: './config/grafana'
     ports:
-      - "5050:80"
+      - 3000:3000/tcp
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - ./grafana:/var/lib/grafana
+      # automatically configure the loki datasource
+      - ./loki/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+    depends_on:
+      - loki
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+
+  #  иногда вместо loki используют promtail (это не точно)
+  alloy:
+    image: grafana/alloy:latest
+    ports:
+      - 12345:12345
+    volumes:
+      - ./alloy-config.alloy:/etc/alloy/config.alloy
+      - ./logs:/tmp/app-logs/
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    depends_on:
+      - wishlist-app
+      - loki
+
+  loki:
+    image: grafana/loki:main
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+
+networks:
+  monitoring:
+    driver: bridge
 
 volumes:
   db-data:
   pgadmin-data:
+  monitoring:
