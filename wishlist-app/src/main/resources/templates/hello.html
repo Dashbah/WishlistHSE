@@ -65,10 +65,16 @@
         <li><a href="http://localhost:8181">You are here</a></li>
         <li><a href="http://localhost:8181/swagger-ui/index.html">Swagger</a></li>
         <li><a href="http://localhost:8181/actuator/prometheus">/actuator/prometheus</a></li>
-        <li><a href="http://localhost:8181/actuator">/actuator</a></li>
+        <li><a href="http://localhost:8181/actuator">/actuator</a>
+        </li><li><a href="http://localhost:16686/search">Jaeger UI - traces с бобром</a></li>
         <li>
             <a href="http://localhost:3000/a/grafana-lokiexplore-app/explore?patterns=%5B%5D&var-primary_label=service_name%7C%3D~%7C.%2B&from=now-15m&to=now&timezone=browser&var-ds=debdo60co8zy8b&var-filters=&var-fields=&var-levels=&var-metadata=&var-patterns=&var-lineFilterV2=&var-lineFilters=&var-filters_replica=">
                 Loki logs
+            </a>
+        </li>
+        <li>
+            <a href="http://localhost:9411/zipkin/?serviceName=wishlist-app&annotationQuery=error&lookback=15m&endTs=1739392361932&limit=10">
+                See errors (traces format) - Zipkin UI
             </a>
         </li>
     </ul>

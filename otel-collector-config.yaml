@@ -1,3 +1,4 @@
+# https://github.com/open-telemetry/opentelemetry-java-examples/blob/main/otlp/docker/otel-collector-config-demo.yaml
 receivers:
   otlp:
     protocols:
@@ -49,3 +50,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug, prometheus]
+#    logs:
+#      receivers: [otlp]
+#      processors: [batch]
+#      exporters: [debug, prometheus]
