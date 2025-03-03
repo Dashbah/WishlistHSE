@@ -28,18 +28,17 @@ public class SampleGiftsController {
 
     @GetMapping("/sampleGift")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<SampleGiftDto> getSampleGift(@RequestParam(name = "id") String id) {
-        // it doesn't work, don't know why
-        log.info(String.format("Принят запрос на получение подарка по id = %s", id));
+    public ResponseEntity<SampleGiftDto> getSampleGift(@RequestParam(name = "title") String title) {
+        log.info(String.format("Принят запрос на получение подарка c title = %s", title));
         try {
-            SampleGiftDto gift = sampleGiftService.findById(Long.getLong(id));
-            log.info(String.format("Запрос на получение подарка c id = %s обработан успешно", id));
+            SampleGiftDto gift = sampleGiftService.findByTitle(title);
+            log.info(String.format("Запрос на получение подарка c id = %s обработан успешно", title));
             return ResponseEntity.ok().body(gift);
         } catch (NullPointerException ex) {
-            log.warn(String.format("Не найден подарок с id = %s", id));
+            log.warn(String.format("Не найден подарок с id = %s", title));
             return ResponseEntity.notFound().build();
         } catch (Exception exception) {
-            log.error(String.format("Произошла ошибка при попытке получения подарка с id = %s", id), (Object) exception.getStackTrace());
+            log.error(String.format("Произошла ошибка при попытке получения подарка с id = %s", title), (Object) exception.getStackTrace());
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -47,7 +46,8 @@ public class SampleGiftsController {
     @PostMapping("/sampleGift")
     public ResponseEntity<SampleGiftDto> createSampleGift(@RequestBody SampleGiftDto sampleGift) throws URISyntaxException {
         SampleGiftDto result = sampleGiftService.save(sampleGift);
-        return ResponseEntity.created(new URI("/api/v1/sampleGifts/" + result.getId())).body(result);
+        log.info("created new gift", result);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/sampleGift/{id}")

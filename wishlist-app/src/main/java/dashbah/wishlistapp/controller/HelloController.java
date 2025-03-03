@@ -11,10 +11,11 @@ import java.util.Random;
 public class HelloController {
     @GetMapping("/")
     public String hello() {
+        log.info("hello!");
         return "hello";
     }
 
-    @GetMapping("/error")
+    @GetMapping("/error-message")
     public String error() {
         Random rnd = new Random();
         int errorId = rnd.nextInt();

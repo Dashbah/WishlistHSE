@@ -7,7 +7,7 @@ import java.util.List;
 public interface SampleGiftService {
     List<SampleGiftDto> findAll();
 
-    SampleGiftDto findById(Long id);
+    SampleGiftDto findByTitle(String title);
 
     SampleGiftDto save(SampleGiftDto book);
 

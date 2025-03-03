@@ -1,0 +1,13 @@
+package dashbah.wishlistapp.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class UserDto {
+    private Long userId;
+    private String username;
+    private String email;
+    // Геттеры и сеттеры
+}
