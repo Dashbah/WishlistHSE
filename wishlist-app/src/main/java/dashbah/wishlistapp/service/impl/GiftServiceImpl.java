@@ -4,29 +4,31 @@ import dashbah.wishlistapp.dto.GiftDTO;
 import dashbah.wishlistapp.entity.UserEntity;
 import dashbah.wishlistapp.exception.GiftNotFoundException;
 import dashbah.wishlistapp.exception.UserNotFoundException;
+import dashbah.wishlistapp.exception.WrongUserAndGiftPairException;
 import dashbah.wishlistapp.mapping.GiftMapper;
-import dashbah.wishlistapp.repository.GiftRepository;
-import dashbah.wishlistapp.repository.UserRepository;
+import dashbah.wishlistapp.repository.wrapper.GiftRepositoryWrapper;
+import dashbah.wishlistapp.repository.wrapper.UserRepositoryWrapper;
 import dashbah.wishlistapp.service.GiftService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
+
+import static dashbah.wishlistapp.util.Util.generateUid;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GiftServiceImpl implements GiftService {
 
-    private final GiftRepository giftRepository;
-    private final UserRepository userRepository;
+    private final GiftRepositoryWrapper giftRepositoryWrapper;
+    private final UserRepositoryWrapper userRepositoryWrapper;
     private final GiftMapper giftMapper;
 
     @Override
     public List<GiftDTO> getAllUserGifts(String username) throws UserNotFoundException {
-        dashbah.wishlistapp.entity.UserEntity user = findUser(username);
+        UserEntity user = userRepositoryWrapper.findUserByUserName(username);
         var gifts = user.getGifts();
         return giftMapper.toListDto(gifts);
     }
@@ -36,37 +38,38 @@ public class GiftServiceImpl implements GiftService {
         String giftUId = generateUid();
         gift.setGiftUId(giftUId);
         var giftEntity = giftMapper.dtoToModel(gift);
-        var user = findUser(username);
+        var user = userRepositoryWrapper.findUserByUserName(username);
         user.addGift(giftEntity);
 
-        /// for checking
-        if (giftRepository.findByGiftUId(giftUId) != null) {
+        /// TODO: move to test
+        try {
+            giftRepositoryWrapper.findGiftByGiftUId(giftUId);
             log.info("Gift created successfully: {}", giftEntity.getGiftUId());
-        } else {
+        } catch (GiftNotFoundException e) {
             log.warn("Gift was not created: {}", giftEntity.getGiftUId());
         }
+
         return gift;
     }
 
     @Override
     public GiftDTO getGiftByGiftUId(String giftUId) throws GiftNotFoundException {
-        var gift = giftRepository.findByGiftUId(giftUId);
-        if (gift == null) {
-            throw new GiftNotFoundException(giftUId);
-        }
+        var gift = giftRepositoryWrapper.findGiftByGiftUId(giftUId);
         return giftMapper.modelToDto(gift);
     }
 
-    private String generateUid() {
-        Random rnd = new Random();
-        return "randomized" + rnd.nextInt(100000, 800000);
-    }
-
-    private UserEntity findUser(String username) throws UserNotFoundException {
-        var user = userRepository.getByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException(username);
+    @Override
+    public void deleteGift(String username, String giftUId) throws UserNotFoundException, GiftNotFoundException, WrongUserAndGiftPairException {
+        var user = userRepositoryWrapper.findUserByUserName(username);
+        var gift = giftRepositoryWrapper.findGiftByGiftUId(giftUId);
+        if (!user.getGifts().contains(gift)) {
+            throw new WrongUserAndGiftPairException();
         }
-        return user;
+
+        // TODO: test it
+        user.getGifts().remove(gift);
+        giftRepositoryWrapper.deleteGift(gift);
+
+        log.info("gift deleted with giftUId = " + giftUId);
     }
 }

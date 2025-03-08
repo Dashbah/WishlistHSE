@@ -4,6 +4,7 @@ import dashbah.wishlistapp.dto.GiftDTO;
 import dashbah.wishlistapp.dto.request.PostGiftRq;
 import dashbah.wishlistapp.exception.GiftNotFoundException;
 import dashbah.wishlistapp.exception.UserNotFoundException;
+import dashbah.wishlistapp.exception.WrongUserAndGiftPairException;
 import dashbah.wishlistapp.service.GiftService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,15 +67,31 @@ public class GiftController {
         }
     }
 
-//    @PutMapping("/{id}")
+    //    @PutMapping("/{id}")
 //    public ResponseEntity<GiftDTO> updateGift(@PathVariable String username, @PathVariable Long id, @RequestBody PostGiftRq request) {
 //        // Логика обновления подарка
 //        return ResponseEntity.ok(new GiftDTO());
 //    }
 //
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteGift(@PathVariable String username, @PathVariable Long id) {
-//        // Логика удаления подарка
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteGift(@PathVariable String username, @PathVariable String giftUId) {
+        // Логика удаления подарка
+        try {
+            giftService.deleteGift(username, giftUId);
+            log.info(String.format("Deleted gift with giftUId = %s, username = %s", giftUId, username));
+            return ResponseEntity.ok().build();
+        } catch (UserNotFoundException e) {
+            log.warn(String.format("User with username = %s not found", username));
+            return ResponseEntity.notFound().build();
+        } catch (GiftNotFoundException e) {
+            log.warn(String.format("Gift with giftUId = %s not found", giftUId));
+            return ResponseEntity.notFound().build();
+        } catch (WrongUserAndGiftPairException e) {
+            log.warn(String.format("WrongUserAndGiftPair: giftUId = %s, username = %s", giftUId, username));
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
