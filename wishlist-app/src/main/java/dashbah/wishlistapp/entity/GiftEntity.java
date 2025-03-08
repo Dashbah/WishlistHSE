@@ -1,9 +1,6 @@
 package dashbah.wishlistapp.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -32,4 +29,8 @@ public class GiftEntity {
 
     @Column(name = "url")
     private String url;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

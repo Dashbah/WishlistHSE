@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Builder
 @Getter
 @Setter
@@ -23,6 +23,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String password;     // TODO: hash it in the future
+
+    @Column(name = "role")
+    private String role; // TODO: change to enum
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GiftEntity> gifts = new ArrayList<>();
