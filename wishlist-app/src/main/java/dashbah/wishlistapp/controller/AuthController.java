@@ -1,14 +1,19 @@
 package dashbah.wishlistapp.controller;
 
 import dashbah.wishlistapp.dto.request.UserRegistrationRequest;
+import dashbah.wishlistapp.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
+
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
@@ -16,10 +21,17 @@ public class AuthController {
         return ResponseEntity.ok("Login successful!");
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationRequest request) {
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
+    @PostMapping("/register-user")
+    public String registerUser(@RequestBody UserRegistrationRequest request) {
         // Логика регистрации
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+//        userService.registerUser(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+        return "congrats";
     }
 
     @PostMapping("/logout")

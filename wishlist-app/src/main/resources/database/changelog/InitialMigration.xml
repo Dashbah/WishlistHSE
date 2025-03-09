@@ -7,35 +7,93 @@
     <changeSet author="dashbah" id="create-table-users">
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="username" type="VARCHAR(100)"/>
-            <column name="password" type="VARCHAR(32)"/>
-            <column name="role" type="VARCHAR(16)"/>
+            <column name="username" type="varchar(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
-    <!-- Создание таблицы gifts -->
-    <changeSet author="dashbah" id="create-table-gifts">
+    <!-- Создание таблицы role -->
+    <changeSet author="dashbah" id="create-table-role">
+        <createTable tableName="role">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы gift -->
+    <changeSet author="dashbah" id="create-table-gift">
         <createTable tableName="gift">
             <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="gift_uid" type="varchar(16)"/>
-            <column name="title" type="varchar(250)"/>
+            <column name="gift_uid" type="varchar(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(250)">
+                <constraints nullable="false"/>
+            </column>
             <column name="description" type="varchar(1024)"/>
             <column name="price" type="double"/>
             <column name="url" type="varchar(250)"/>
-            <column name="user_id" type="bigint"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
+        <!-- Внешний ключ для связи gift и users -->
         <addForeignKeyConstraint
                 baseTableName="gift"
                 baseColumnNames="user_id"
                 constraintName="fk_gift_user"
-                referencedTableName="user"
+                referencedTableName="users"
                 referencedColumnNames="id"
                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Создание таблицы для связи Many-to-Many между users и role -->
+    <changeSet author="dashbah" id="create-table-users_roles">
+        <createTable tableName="users_roles">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Внешний ключ для связи users_roles и users -->
+        <addForeignKeyConstraint
+                baseTableName="users_roles"
+                baseColumnNames="user_id"
+                constraintName="fk_users_roles_user"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Внешний ключ для связи users_roles и role -->
+        <addForeignKeyConstraint
+                baseTableName="users_roles"
+                baseColumnNames="role_id"
+                constraintName="fk_users_roles_role"
+                referencedTableName="role"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Уникальный ключ для пары user_id и role_id -->
+        <addUniqueConstraint
+                tableName="users_roles"
+                columnNames="user_id, role_id"
+                constraintName="uq_users_roles"/>
     </changeSet>
 
 </databaseChangeLog>

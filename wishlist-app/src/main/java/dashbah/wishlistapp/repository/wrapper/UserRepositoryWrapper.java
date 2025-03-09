@@ -14,4 +14,8 @@ public class UserRepositoryWrapper {
     public UserEntity findUserByUserName(String username) throws UserNotFoundException {
         return userRepository.getByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
     }
+
+    public UserEntity saveUser(UserEntity user) {
+        return userRepository.save(user);
+    }
 }
