@@ -1,6 +1,6 @@
 package dashbah.wishlistapp.controller;
 
-import dashbah.wishlistapp.dto.UserDto;
+import dashbah.wishlistapp.dto.UserDTO;
 import dashbah.wishlistapp.dto.request.UserUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     @GetMapping
-    public ResponseEntity<UserDto> getAccount() {
+    public ResponseEntity<UserDTO> getAccount() {
         // Логика получения информации о текущем пользователе
-        return ResponseEntity.ok(new UserDto());
+        return ResponseEntity.ok(new UserDTO());
     }
 
     @PutMapping
