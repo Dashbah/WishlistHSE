@@ -1,42 +1,58 @@
 package dashbah.wishlistapp.controller;
 
-import dashbah.wishlistapp.dto.request.UserRegistrationRequest;
-import dashbah.wishlistapp.service.UserService;
-import jakarta.servlet.http.HttpSession;
+import dashbah.wishlistapp.dto.UserDTO;
+import dashbah.wishlistapp.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    private final RegistrationService service;
 
-    private final UserService userService;
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
+        if (userDTO == null) {
+            return ResponseEntity.badRequest().body("UserDTO should not be null");
+        }
+        try {
+            return ResponseEntity.ok(service.registerClient(userDTO));
+        } catch (IllegalArgumentException | AuthenticationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/register/admin")
+    public ResponseEntity<String> registerManager(@RequestBody UserDTO userDTO) {
+        if (userDTO == null) {
+            return ResponseEntity.badRequest().body("UserDTO should not be null");
+        }
+        try {
+            return ResponseEntity.ok(service.registerManagerOrAdmin(userDTO));
+        } catch (IllegalArgumentException | AuthenticationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        // Логика аутентификации
-        return ResponseEntity.ok("Login successful!");
-    }
-
-    @GetMapping("/register")
-    public String register() {
-        return "register";
-    }
-
-    @PostMapping("/register-user")
-    public String registerUser(@RequestBody UserRegistrationRequest request) {
-        // Логика регистрации
-//        userService.registerUser(request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-        return "congrats";
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("Logged out successfully");
+    public ResponseEntity<String> authenticate(@RequestBody UserDTO userDTO) {
+        try {
+            System.out.println("Hello from authenticate");
+            return ResponseEntity.ok(service.authenticateUser(userDTO));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (AuthenticationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

@@ -1,25 +1,50 @@
 package dashbah.wishlistapp.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "role")
-@Getter
+import static dashbah.wishlistapp.entity.Permission.*;
 
-public class Role implements GrantedAuthority {
-    @Id
-    private Long id;
-    private String name;
-    @Transient
-    @ManyToMany(mappedBy = "roles")
-    private Set<UserEntity> users;
+@RequiredArgsConstructor
+public enum Role {
+    CLIENT(Collections.emptySet()),
+    ADMIN(
+            Set.of(
+                    ADMIN_READ,
+                    ADMIN_CREATE,
+                    ADMIN_UPDATE,
+                    ADMIN_DELETE,
 
-    @Override
-    public String getAuthority() {
-        return name;
+                    MANAGER_READ,
+                    MANAGER_CREATE,
+                    MANAGER_UPDATE,
+                    MANAGER_DELETE
+            )
+    ),
+    MANAGER(
+            Set.of(
+                    MANAGER_READ,
+                    MANAGER_CREATE,
+                    MANAGER_UPDATE,
+                    MANAGER_DELETE
+            )
+    );
+
+    @Getter
+    private final Set<Permission> permissions;
+
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        var authorities = getPermissions()
+                .stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+                .collect(Collectors.toList());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        return authorities;
     }
 }

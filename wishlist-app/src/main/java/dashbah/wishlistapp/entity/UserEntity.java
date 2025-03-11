@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,18 +20,15 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String username;
+    private String password;
+    private String email;
+    private boolean isArchived;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Column(nullable = false)
-    private String password;     // TODO: hash it in the future
-
-    @Transient
-    private String passwordConfirm;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GiftEntity> gifts = new ArrayList<>();
@@ -47,7 +43,12 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return role.getAuthorities();
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override
