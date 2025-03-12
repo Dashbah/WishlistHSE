@@ -1,6 +1,7 @@
 spring:
   datasource:
 #    url: jdbc:postgresql://localhost:5432/shkaf
+#    locally
     url: jdbc:postgresql://localhost:5432/wishlist_dev
     username: postgres
     password: postgres
