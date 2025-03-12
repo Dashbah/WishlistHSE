@@ -1,10 +1,12 @@
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5432/shkaf
-#    locally
-    url: jdbc:postgresql://localhost:5432/wishlist_dev
-    username: postgres
-    password: postgres
+    #    locally
+    #url: jdbc:postgresql://localhost:5432/wishlist_dev
+    #username: postgres
+    #password: postgres
+    url: jdbc:postgresql://localhost:5432/shkaf
+    username: admin
+    password: 123qwe
   jpa:
     hibernate:
       ddl-auto: none
