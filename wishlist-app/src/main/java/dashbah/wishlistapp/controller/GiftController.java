@@ -52,7 +52,7 @@ public class GiftController {
         }
     }
 
-    @GetMapping("/{giftUId}")
+    @GetMapping("/{username}/{giftUId}")
     public ResponseEntity<GiftDTO> getGift(@PathVariable String username, @PathVariable String giftUId) {
         // Логика получения информации о конкретном подарке
         try {
