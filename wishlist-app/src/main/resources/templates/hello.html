@@ -13,6 +13,7 @@
             color: #333;
             line-height: 1.6;
         }
+
         .container {
             max-width: 800px;
             margin: 40px auto;
@@ -21,12 +22,14 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 20px;
             font-size: 2.5em;
         }
+
         h2 {
             color: #34495e;
             margin-top: 30px;
@@ -34,14 +37,17 @@
             border-bottom: 2px solid #eaecef;
             padding-bottom: 10px;
         }
+
         p {
             font-size: 1.1em;
             color: #555;
         }
+
         .function-list {
             list-style-type: none;
             padding: 0;
         }
+
         .function-list li {
             margin: 15px 0;
             padding: 10px;
@@ -52,32 +58,39 @@
             display: flex;
             align-items: center;
         }
+
         .function-list li:hover {
             background-color: #e9ecef;
             transform: translateX(10px);
         }
+
         .function-list .done {
             color: #28a745;
         }
+
         .function-list .not-done {
             color: #dc3545;
         }
+
         .function-list .done::before {
             content: '✔';
             margin-right: 10px;
             color: #28a745;
         }
+
         .function-list .not-done::before {
             content: '✖';
             margin-right: 10px;
             color: #dc3545;
         }
+
         .links {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 20px;
         }
+
         .links a {
             display: inline-block;
             padding: 12px 20px;
@@ -88,10 +101,12 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
             font-size: 1em;
         }
+
         .links a:hover {
             background-color: #0056b3;
             transform: translateY(-3px);
         }
+
         .author {
             text-align: center;
             font-size: 1.2em;
@@ -110,7 +125,9 @@
         <li class="done">Аутентификация и регистрация пользователей и контроль доступа к API</li>
         <li class="done">Поддержка gRPC или HTTP API (минимум 4 бизнес-метода)</li>
         <li class="done">Использование внешней БД для хранения данных</li>
-        <li class="done">Схема базы данных создаётся при запуске или деплое приложения, поддерживается версионирование схемы</li>
+        <li class="done">Схема базы данных создаётся при запуске или деплое приложения, поддерживается версионирование
+            схемы
+        </li>
         <li class="done">Автоматическое создание и версионирование схемы БД</li>
         <li class="done">Логирование - Loki</li>
         <li class="done">Метрики - Prometheus, OpenTelemetry Collector</li>
@@ -125,7 +142,8 @@
         <li class="done">Деплой в Yandex Cloud</li>
         <li class="done">Настройка ingress доступа к сервисам</li>
         <li class="done">Настройка nginx для внешнего доступа к машине</li>
-        <li class="done">OpenTelemetry collector - сборка трейсинга и метрик (Zipkin, Jaeger) - внутри docker-compose</li>
+        <li class="done">OpenTelemetry collector - сборка трейсинга и метрик (Zipkin, Jaeger) - внутри docker-compose
+        </li>
     </ul>
 
     <h2>Ссылки:</h2>
@@ -135,6 +153,21 @@
         <a href="http://89.169.154.190:9090/" target="_blank">Prometheus</a>
         <a href="http://89.169.154.190:3000/" target="_blank">Grafana</a>
         <a href="http://89.169.154.190:8080/swagger-ui/index.html" target="_blank">Swagger</a>
+    </div>
+
+    <h2>Пример запроса для регистрации:</h2>
+    <div class="code-block">
+        <pre>
+curl -X 'POST' \
+  'http://89.169.154.190:8080/auth/register' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "username_123",
+  "password": "12345",
+  "email": "string",
+  "role": "CLIENT"
+}'</pre>
     </div>
 </div>
 </body>
